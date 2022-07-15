@@ -1,0 +1,70 @@
+1: Block {
+    z_division: 1,
+    first_add: 14,
+    last_add: 12,
+}
+2: Block {
+    z_division: 1,
+    first_add: 10,
+    last_add: 9,
+}
+3: Block {
+    z_division: 1,
+    first_add: 13,
+    last_add: 8,
+}
+4: Block {
+    z_division: 26,
+    first_add: -8,
+    last_add: 3,
+}
+5: Block {
+    z_division: 1,
+    first_add: 11,
+    last_add: 0,
+}
+6: Block {
+    z_division: 1,
+    first_add: 11,
+    last_add: 11,
+}
+7: Block {
+    z_division: 1,
+    first_add: 14,
+    last_add: 10,
+}
+8: Block {
+    z_division: 26,
+    first_add: -11,
+    last_add: 13,
+}
+9: Block {
+    z_division: 1,
+    first_add: 14,
+    last_add: 3,
+}
+10: Block {
+    z_division: 26,
+    first_add: -1,
+    last_add: 10,
+}
+11: Block {
+    z_division: 26,
+    first_add: -8,
+    last_add: 10,
+}
+12: Block {
+    z_division: 26,
+    first_add: -5,
+    last_add: 14,
+}
+13: Block {
+    z_division: 26,
+    first_add: -16,
+    last_add: 6,
+}
+14: Block {
+    z_division: 26,
+    first_add: -6,
+    last_add: 5,
+}
