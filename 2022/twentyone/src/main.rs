@@ -15,33 +15,36 @@ fn part2(program: &HashMap<String, Expression>) -> i64 {
         let new_root = Expression::Operation(Operation::Sub(v1.clone(), v2.clone()));
         let mut program2 = program.clone();
         program2.insert("root".to_string(), new_root);
-        let lower_bound: i64 = 3876027196110;
-        let uppper_bound: i64 = lower_bound * 2;
-        let mut i: i64 = lower_bound;
+        let mut current_value: i64 = 0;
+        let mut last_diff: i64 = 0;
+        let mut jump_vector: i64 = 1;
+        let mut n_improvements_in_a_row: i64 = 0;
+
         loop {
-            if i > uppper_bound {
-                panic!("Didnt find it")
-            }
-            if i % 100000 == 0 {
-                println!("{}", (lower_bound + i) as f64 / uppper_bound as f64);
-            }
-            program2.insert("humn".to_string(), Expression::Const(i));
+            program2.insert("humn".to_string(), Expression::Const(current_value));
             let diff = calculate(&program2);
-            let diff_num_digits = diff.to_string().len();
-            println!("{i}: {diff} - num digits: {diff_num_digits}");
-            let num_digit_search = 1;
-            if diff_num_digits == num_digit_search {
-                panic!("{num_digit_search}");
-            }
             if diff == 0 {
-                return i;
+                return current_value;
             }
-            i += 1;
+            if diff.abs() > last_diff.abs() {
+                n_improvements_in_a_row = 0;
+                jump_vector *= -1;
+                jump_vector = if (jump_vector / 2).abs() < 1 {
+                    jump_vector.signum()
+                } else {
+                    jump_vector / 2
+                }
+            } else if n_improvements_in_a_row > 10 {
+                jump_vector = jump_vector * 2;
+            } else {
+                n_improvements_in_a_row += 1;
+            }
+            current_value += jump_vector;
+            last_diff = diff;
         }
     } else {
         panic!("Unexpected root stuff");
     }
-    panic!("Didnt find the value");
 }
 
 fn calculate(program: &HashMap<String, Expression>) -> i64 {
