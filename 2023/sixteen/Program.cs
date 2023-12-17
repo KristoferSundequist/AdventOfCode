@@ -8,8 +8,8 @@ for (var y = 0; y < lines.Length; y++)
     }
 }
 
-var beams = GetAllBeams(contraption, new HashSet<LightBeam> { new LightBeam(new Coordinate(0, 0), Direction.Right) });
-Console.WriteLine($"Result 1: {beams.Select(beam => beam.coordinate).Distinct().Count()}");
+var nEnergized = GetAllBeams(contraption, new HashSet<LightBeam> { new LightBeam(new Coordinate(0, 0), Direction.Right) }).Select(beam => beam.coordinate).Distinct().Count();
+Console.WriteLine($"Result 1: {nEnergized}");
 
 
 int mostSoFar = 0;
@@ -25,24 +25,10 @@ for (var i = 0; i < lines.Length; i++)
 }
 Console.WriteLine($"Result 2: {mostSoFar}");
 
-void DrawEnergized(HashSet<Coordinate> coordinates, int maxY, int maxX)
-{
-    for (var y = -10; y < maxY + 10; y++)
-    {
-        for (var x = -10; x < maxX + 10; x++)
-        {
-            if (coordinates.Contains(new Coordinate(y, x)))
-            {
-                Console.Write('#');
-            }
-            else
-            {
-                Console.Write('.');
-            }
-        }
-        Console.WriteLine();
-    }
-}
+
+
+
+
 
 HashSet<LightBeam> GetAllBeams(Dictionary<Coordinate, char> contraption, HashSet<LightBeam> start)
 {
