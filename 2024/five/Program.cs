@@ -2,13 +2,11 @@
     .Select(Update.FromString)
     .ToList();
 
-var allPages = updates.SelectMany(u => u.Pages).ToHashSet();
-
 var rawOrderingRules = File.ReadAllLines("ordering.txt")
     .Select(OrderingRule.FromString)
     .ToList();
 
-var orderingRules = new OrderingRules(rawOrderingRules, allPages);
+var orderingRules = new OrderingRules(rawOrderingRules);
 
 var correctLines = updates.Where(u => u.IsCorrect(orderingRules));
 var correctMiddleNumbers = correctLines.Select(u => u.GetMiddleNumber());

@@ -1,27 +1,8 @@
-using System.Security;
-
-class OrderingRules
+class OrderingRules(List<OrderingRule> rules)
 {
-    private Dictionary<int, HashSet<int>> DisallowedNextPagesByFirstPage;
-    private List<OrderingRule> _rules;
-
-    public OrderingRules(List<OrderingRule> rules, HashSet<int> allPages)
-    {
-        DisallowedNextPagesByFirstPage = allPages
-            .ToDictionary(p => p, p => CalculateDisallowedNextPages(rules, p));
-        _rules = rules;
-    }
-
-    public HashSet<int>? GetDisallowedNextPages(int page)
-    {
-        return DisallowedNextPagesByFirstPage.TryGetValue(page, out var disallowedNextPages)
-            ? disallowedNextPages
-            : null;
-    }
-
     public int Compare(int a, int b)
     {
-        foreach(var rule in _rules)
+        foreach (var rule in rules)
         {
             if (rule.Page1 == a && rule.Page2 == b)
             {
@@ -33,12 +14,5 @@ class OrderingRules
             }
         }
         return 0;
-    }
-
-    private HashSet<int> CalculateDisallowedNextPages(List<OrderingRule> rules, int page)
-    {
-        return rules.Where(r => r.Page2 == page)
-            .Select(r => r.Page1)
-            .ToHashSet();
     }
 }

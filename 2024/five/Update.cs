@@ -10,11 +10,6 @@ record Update()
         };
     }
 
-    public override string ToString()
-    {
-        return string.Join(", ", Pages);
-    }
-
     public int GetMiddleNumber()
     {
         var middleNumber = Pages[Pages.Count / 2];
@@ -25,14 +20,9 @@ record Update()
     {
         for (var i = 0; i < Pages.Count - 1; i++)
         {
-            var disallowedNextPages = rules.GetDisallowedNextPages(Pages[i]);
-            if (disallowedNextPages == null)
-            {
-                continue;
-            }
             for (var j = i + 1; j < Pages.Count; j++)
             {
-                if (disallowedNextPages.Contains(Pages[j]))
+                if (rules.Compare(Pages[i], Pages[j]) < 0)
                 {
                     return false;
                 }
