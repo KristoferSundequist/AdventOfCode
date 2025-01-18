@@ -1,28 +1,30 @@
-﻿//var computer = new Computer(729,0,0,[0,1,5,4,3,0]);
-//var computer = new Computer(56256477, 0, 0, [2,4,1,1,7,5,1,5,0,3,4,3,5,5,3,0]);
-for (long i = 0; i < 10000; i++)
+﻿
+var program = new List<short> { 2, 4, 1, 1, 7, 5, 1, 5, 0, 3, 4, 3, 5, 5, 3, 0 };
+
+var computer1 = new Computer(56256477, 0, 0, program);
+computer1.Run();
+Console.WriteLine($"Part 1: {string.Join(",", computer1.Output)}");
+
+
+var solutions = new HashSet<string> { "" }; ;
+for (int i = 0; i < 16; i++)
 {
-    Console.WriteLine(i);
-    //var computer = new Computer(i, 0, 0, [0,3,5,4,3,0]);
-    var computer = new Computer(i, 0, 0, [2,4,1,1,7,5,1,5,0,3,4,3,5,5,3,0]);
-    if (computer.IsCorrect())
+    var newSolutions = new HashSet<string>();
+    for (long j = 0; j < 1024; j++)
     {
-        Console.WriteLine("--------------");
-        Console.WriteLine(i);
-        computer.PrintOutput();
+        var binaryReprJ = Convert.ToString(j, 2).PadLeft(10, '0');
+        foreach (var currentSolution in solutions)
+        {
+            var candidateBinary = $"{binaryReprJ}{currentSolution}";
+            var candidate = Convert.ToInt64(candidateBinary, 2);
+            var computer = new Computer(candidate, 0, 0, program);
+            if (SpecialPurposeComputer.IsCorrect(candidate, i))
+            {
+                var lastThreeBits = candidateBinary[^(3 * (i + 1))..];
+                newSolutions.Add(lastThreeBits);
+            }
+        }
     }
-    computer.PrintOutput();
-
+    solutions = newSolutions;
 }
-
-/*
-
-2027059637
-2,4,1,1,7,5,1,5,0,3,4
-
-*/
-
-// var computer2 = new Computer(117440, 0, 0, [0,3,5,4,3,0]);
-// computer2.Run();
-
-// 6, 14, 332, 2027059637
+Console.WriteLine($"Part 2: {Convert.ToInt64(solutions.Min(), 2)}");

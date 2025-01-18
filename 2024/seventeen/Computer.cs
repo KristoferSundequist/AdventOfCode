@@ -3,11 +3,12 @@ public class Computer
     private long A;
     private long B;
     private long C;
-    private List<long> Program;
-    private long InstructionPointer;
-    private List<long> Output = [];
+    private List<short> Program;
+    private short InstructionPointer;
+    public List<short> Output = [];
+    public long NumJumps = 0;
 
-    public Computer(long a, long b, long c, List<long> program)
+    public Computer(long a, long b, long c, List<short> program)
     {
         A = a;
         B = b;
@@ -20,51 +21,40 @@ public class Computer
     {
         while (InstructionPointer < Program.Count)
         {
-            var opcode = Program[(int)InstructionPointer];
-            var operand = Program[(int)InstructionPointer + 1];
+            var opcode = Program[InstructionPointer];
+            var operand = Program[InstructionPointer + 1];
             RunInstruction(opcode, operand);
         }
     }
 
-    public void PrintOutput()
+    public bool IsCorrectUptil(int i)
     {
-        Console.WriteLine(string.Join(",", Output));
-    }
-
-    public bool IsCorrect()
-    {
-        while (InstructionPointer < Program.Count)
+        while (InstructionPointer < Program.Count && Output.Count <= i)
         {
-            var opcode = Program[(int)InstructionPointer];
-            var operand = Program[(int)InstructionPointer + 1];
+            var opcode = Program[InstructionPointer];
+            var operand = Program[InstructionPointer + 1];
             RunInstruction(opcode, operand);
-            if (!IsCorrect(Program, Output))
+            if (Output.Count > 0)
             {
-                return false;
-            }
-
-        }
-        return true;
-    }
-
-    private static bool IsCorrect(List<long> expectedOutput, List<long> actualOutput)
-    {
-        for (int i = 0; i < actualOutput.Count; i++)
-        {
-            if (expectedOutput[i] != actualOutput[i])
-            {
-                return false;
+                if (Output[^1] != Program[Output.Count - 1])
+                {
+                    return false;
+                }
+                else if (Output.Count == i + 1)
+                {
+                    return true;
+                }
             }
         }
-        return true;
+        return false;
     }
 
-    private void RunInstruction(long opcode, long operand)
+    private void RunInstruction(short opcode, short operand)
     {
         switch (opcode)
         {
             case 0:
-                Adv(operand);
+                Xdv('A', operand);
                 break;
             case 1:
                 Bxl(operand);
@@ -75,6 +65,7 @@ public class Computer
             case 3:
                 if (Jnz(operand))
                 {
+                    NumJumps++;
                     return;
                 }
                 break;
@@ -85,10 +76,10 @@ public class Computer
                 Out(operand);
                 break;
             case 6:
-                Bdv(operand);
+                Xdv('B', operand);
                 break;
             case 7:
-                Cdv(operand);
+                Xdv('C', operand);
                 break;
             default:
                 throw new ArgumentException($"Invalid opcode {opcode}");
@@ -97,23 +88,17 @@ public class Computer
         InstructionPointer += 2;
     }
 
-    private void Adv(long operand)
-    {
-        var result = A / (long)Math.Pow(2, GetComboOperand(operand));
-        A = (long)Math.Truncate((decimal)result);
-    }
-
-    private void Bxl(long operand)
+    private void Bxl(short operand)
     {
         B = B ^ operand;
     }
 
-    private void Bst(long operand)
+    private void Bst(short operand)
     {
         B = GetComboOperand(operand) % 8;
     }
 
-    private bool Jnz(long operand)
+    private bool Jnz(short operand)
     {
         if (A != 0)
         {
@@ -123,29 +108,38 @@ public class Computer
         return false;
     }
 
-    private void Bxc(long operand)
+    private void Bxc(short operand)
     {
         B = B ^ C;
     }
 
-    private void Out(long operand)
+    private void Out(short operand)
     {
-        Output.Add(GetComboOperand(operand) % 8);
+        Output.Add((short)(GetComboOperand(operand) % 8));
     }
 
-    private void Bdv(long operand)
+    private void Xdv(char register, short operand)
     {
-        var result = A / (long)Math.Pow(2, GetComboOperand(operand));
-        B = (long)Math.Truncate((decimal)result);
+        var truncatedResult = A >> (int)GetComboOperand(operand);
+        if (register == 'A')
+        {
+            A = truncatedResult;
+        }
+        else if (register == 'B')
+        {
+            B = truncatedResult;
+        }
+        else if (register == 'C')
+        {
+            C = truncatedResult;
+        }
+        else
+        {
+            throw new ArgumentException($"Invalid register {register}");
+        }
     }
 
-    private void Cdv(long operand)
-    {
-        var result = A / (long)Math.Pow(2, GetComboOperand(operand));
-        C = (long)Math.Truncate((decimal)result);
-    }
-
-    private long GetComboOperand(long value)
+    private long GetComboOperand(short value)
     {
         return value switch
         {
