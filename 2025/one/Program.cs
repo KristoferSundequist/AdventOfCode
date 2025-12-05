@@ -1,29 +1,24 @@
 ﻿var lines = System.IO.File.ReadAllLines("input.txt");
 
-var position = 50;
+Part1(lines);
+Part2(lines);
 
-var password = 0;
-foreach (var line in lines)
+void Part1(string[] lines)
 {
-    position = Rotate(position, line);
-    if (position == 0)
+    var position = 50;
+    var password = 0;
+    foreach (var line in lines)
     {
-        password += 1;
+        position = Rotate1(position, line);
+        if (position == 0)
+        {
+            password += 1;
+        }
     }
+    Console.WriteLine("Password 1: " + password);
 }
-Console.WriteLine("Password 1: " + password);
 
-var password2 = 0;
-position = 50;
-foreach (var line in lines)
-{
-    var (numZeros, newPosition) = Rotate2(position, line);
-    password2 += numZeros;
-    position = newPosition;
-}
-Console.WriteLine("Password 2: " + password2);
-
-int Rotate(int position, string rotation)
+int Rotate1(int position, string rotation)
 {
     var direction = rotation[0];
     var degrees = int.Parse(rotation[1..]) % 100;
@@ -44,6 +39,19 @@ int Rotate(int position, string rotation)
     }
 }
 
+void Part2(string[] lines)
+{
+    var position = 50;
+    var password = 0;
+    foreach (var line in lines)
+    {
+        var (numZeros, newPosition) = Rotate2(position, line);
+        password += numZeros;
+        position = newPosition;
+    }
+    Console.WriteLine("Password 2: " + password);
+}
+
 (int numZeros, int newPosition) Rotate2(int position, string rotation)
 {
     var direction = rotation[0];
@@ -52,11 +60,6 @@ int Rotate(int position, string rotation)
     var numZeros = 0;
     for (int i = 0; i < degrees; i++)
     {
-        if (i != 0 && position == 0)
-        {
-            numZeros += 1;
-        }
-
         if (direction == 'R')
         {
             position += 1;
@@ -73,10 +76,10 @@ int Rotate(int position, string rotation)
                 position = 99;
             }
         }
-    }
-    if (position == 0 && degrees > 0)
-    {
-        numZeros += 1;
+        if (position == 0)
+        {
+            numZeros += 1;
+        }
     }
     return (numZeros, position);
 }
