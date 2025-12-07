@@ -35,41 +35,44 @@ public class ManifoldDiagram
         _manifoldHeight = lines.Length;
     }
 
-    public int GetNumSplits()
+    public (int numSplits, long numTimeLines) GetNumSplits()
     {
-        var currentBeams = new HashSet<Position> { _startBeam };
+        var currentBeamCounts = new Dictionary<Position, long> { { _startBeam, 1 } };
         var totalNumSplits = 0;
         for (var y = 0; y < _manifoldHeight; y++)
         {
-            var (newBeams, numSplits) = AdvanceBeams(currentBeams);
-            currentBeams = newBeams;
+            var (newBeams, numSplits) = AdvanceBeams(currentBeamCounts);
+            currentBeamCounts = newBeams;
             totalNumSplits += numSplits;
         }
-        return totalNumSplits;
+        var numTimeLines = currentBeamCounts.Sum(kvp => kvp.Value);
+        return (totalNumSplits, numTimeLines);
     }
 
-    public (HashSet<Position>, int) AdvanceBeams(HashSet<Position> beams)
+    public (Dictionary<Position, long>, int) AdvanceBeams(Dictionary<Position, long> beamCounts)
     {
-        var newBeams = new HashSet<Position>();
+        var newBeamCounts = new Dictionary<Position, long>();
         var numSplits = 0;
 
-        foreach (var beam in beams)
+        foreach (var (beam, count) in beamCounts)
         {
             var newBeamCandidate = beam.Down();
             if (_splitters.Contains(newBeamCandidate))
             {
                 var (left, right) = newBeamCandidate.Split();
-                newBeams.Add(left);
-                newBeams.Add(right);
+
+                newBeamCounts[left] = newBeamCounts.GetValueOrDefault(left) + count;
+                newBeamCounts[right] = newBeamCounts.GetValueOrDefault(right) + count;
+
                 numSplits++;
             }
             else
             {
-                newBeams.Add(newBeamCandidate);
+                newBeamCounts[newBeamCandidate] = newBeamCounts.GetValueOrDefault(newBeamCandidate) + count;
             }
         }
 
-        return (newBeams, numSplits);
+        return (newBeamCounts, numSplits);
     }
 }
 
