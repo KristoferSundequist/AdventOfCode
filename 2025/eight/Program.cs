@@ -26,7 +26,8 @@ for (var jb1i = 0; jb1i < junctionBoxList.Count; jb1i++)
 
 pairs = pairs.OrderBy(p => p.Item3).ToList();
 
-for (var i = 0; i < numToMerge; i++)
+var i = 0;
+while (true)
 {
     var (jb1, jb2, distance) = pairs[i];
     var circuitFrom = junctionBoxToCircuit[jb2];
@@ -35,9 +36,18 @@ for (var i = 0; i < numToMerge; i++)
     {
         junctionBoxToCircuit[kvp.Key] = junctionBoxToCircuit[jb1];
     }
+
+    var shouldStop = junctionBoxToCircuit.Values.Distinct().Count() == 1;
+
+    if (shouldStop)
+    {
+        Console.WriteLine($"{jb1} * {jb2} = {jb1.X * jb2.X}");
+        break;
+    }
+    i++;
 }
 
-Console.WriteLine($"Circuit sizes: {String.Join(",", junctionBoxToCircuit.GroupBy(kvp => kvp.Value).Select(g => g.Count()).OrderByDescending(count => count))}");
+/* Console.WriteLine($"Circuit sizes: {String.Join(",", junctionBoxToCircuit.GroupBy(kvp => kvp.Value).Select(g => g.Count()).OrderByDescending(count => count))}");
 
 var largestThree = junctionBoxToCircuit.GroupBy(kvp => kvp.Value)
     .Select(g => g.Count())
@@ -46,4 +56,4 @@ var largestThree = junctionBoxToCircuit.GroupBy(kvp => kvp.Value)
     .ToArray();
 
 var product = largestThree[0] * largestThree[1] * largestThree[2];
-Console.WriteLine($"Product of sizes of largest three circuits {largestThree[0]} * {largestThree[1]} * {largestThree[2]} = {product}");
+Console.WriteLine($"Product of sizes of largest three circuits {largestThree[0]} * {largestThree[1]} * {largestThree[2]} = {product}"); */
